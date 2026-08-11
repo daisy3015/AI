@@ -1,17 +1,17 @@
 {
-  "2026.05.19|파이토알엑스 트리플 아르기닌 액티브": {
-    "renewal": true,
-    "note": null,
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1778740140000000"
-  },
-  "2026/03/31|액티브 비큐텐": {
-    "renewal": true,
-    "note": null,
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774920300000000"
-  },
-  "2026-05-21|YDY 콜라겐 비오틴 듀오": {
-    "renewal": true,
-    "note": "콜라겐 1,000달톤→평균 350달톤 · 제조원가 10,500→7,750원/set",
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351120000000"
-  }
+	"2026.05.19|파이토알엑스 트리플 아르기닌 액티브": {
+		"renewal": true,
+		"note": null,
+		"src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1778740140000000"
+	},
+	"2026/03/31|액티브 비큐텐": {
+		"renewal": true,
+		"note": null,
+		"src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774920300000000"
+	},
+	"2026-05-21|YDY 콜라겐 비오틴 듀오": {
+		"renewal": true,
+		"note": "콜라겐 1,000달톤→평균 350달톤 · 제조원가 10,500→7,750원/set",
+		"src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351120000000"
+	}
 }

@@ -50,10 +50,24 @@ def norm(x):
 
 
 def clean_order_text(v):
-    """발주 키 비교용 텍스트를 trim 하고 연속 공백을 한 칸으로 맞춘다."""
+    """발주 키 비교용 텍스트의 앞뒤·중복 공백을 정규화한다."""
     if v is None:
         return ""
     return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", str(v)).strip())
+
+
+def order_date(v):
+    """발주 키 날짜를 YYYY-MM-DD 로 정규화한다."""
+    if not v:
+        return None
+    s = clean_order_text(v).replace("/", "-").replace(".", "-")
+    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s)
+    if m:
+        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    m = re.match(r"^(\d{2})-(\d{1,2})-(\d{1,2})", s)
+    if m:
+        return f"20{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    return datepart(s)
 
 
 def datepart(v):
@@ -62,20 +76,6 @@ def datepart(v):
         return None
     m = re.match(r"(\d{4}-\d{2}-\d{2})", str(v))
     return m.group(1) if m else None
-
-
-def order_date(v):
-    """발주 키 날짜를 YYYY-MM-DD 로 정규화한다."""
-    if not v:
-        return None
-    s = str(v).strip().replace("/", "-").replace(".", "-")
-    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s)
-    if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    m = re.match(r"^(\d{2})-(\d{1,2})-(\d{1,2})", s)
-    if m:
-        return f"20{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    return datepart(s)
 
 
 def jlist(v):
@@ -223,7 +223,7 @@ def annotate_renewal(orders):
 
 
 def merge_order_notes(orders, notes, warn):
-    """order_notes.json 의 날짜|제품명 키를 실제 주문에 유연하게 병합한다."""
+    """order_notes.json 의 날짜|제품명 키를 주문에 병합한다."""
     if not isinstance(notes, dict):
         warn.append("발주 노트가 객체가 아니어서 무시했습니다")
         return
@@ -232,39 +232,38 @@ def merge_order_notes(orders, notes, warn):
             warn.append(f"발주 노트 키 형식 오류: {raw_key}")
             continue
         raw_date, raw_product = (clean_order_text(part)
-                     for part in str(raw_key).split("|", 1))
+                                 for part in str(raw_key).split("|", 1))
         note_date, note_product = order_date(raw_date), norm(raw_product)
         hits = [o for o in orders
-                if (not note_date or order_date(o.get("date")) == note_date)
+                if order_date(o.get("date")) == note_date
                 and note_product
-            and (note_product == norm(clean_order_text(o.get("product")))
-                 or note_product in norm(clean_order_text(o.get("product")))
-                 or norm(clean_order_text(o.get("product"))) in note_product)]
+                and (note_product == norm(clean_order_text(o.get("product")))
+                     or note_product in norm(clean_order_text(o.get("product")))
+                     or norm(clean_order_text(o.get("product"))) in note_product)]
         if not hits:
             warn.append(f"발주 노트 매칭 실패: {raw_key}")
             continue
         order = sorted(hits, key=lambda o: len(norm(o.get("product"))), reverse=True)[0]
-        if "renewal" in payload:
-            order["renewal"] = bool(payload["renewal"])
+        order["renewal"] = bool(payload.get("renewal", order.get("renewal")))
         if "note" in payload:
             order["note"] = payload["note"]
         if payload.get("src"):
             order["noteSrc"] = payload["src"]
         order["orderNote"] = {
-            "renewal": bool(payload.get("renewal", order.get("renewal"))),
+            "renewal": order["renewal"],
             "note": payload.get("note"),
             "src": payload.get("src"),
         }
 
 
 def fill_missing_order_matches(orders, sheet, warn):
-    """matchKey가 없는 발주를 공백 제거·부분 일치로 자동 매칭한다."""
+    """match 판단이 아예 없는 발주만 보수적으로 자동 매칭 (기존 판단은 절대 건드리지 않음)"""
     cand = [(norm(r["name"]), r) for r in sheet if len(norm(r["name"])) >= MATCH_MIN_LEN]
     for o in orders:
-        if o.get("matchKey") or o.get("match") == "material":
+        if "match" in o:
             continue
         p = norm(o.get("product"))
-        hits = sorted([r for n, r in cand if n and (n in p or p in n)],
+        hits = sorted([r for n, r in cand if n and n in p],
                       key=lambda r: -len(norm(r["name"])))
         if len(hits) == 1 or (hits and len(norm(hits[0]["name"])) > len(norm(hits[1]["name"]))):
             r = hits[0]
@@ -353,9 +352,7 @@ def main():
     cfg = load_json(BUILD / "config.json", "설정(config.json)")
     sheet = load_json(BUILD / "sheet.json", "시트 스냅샷(sheet.json)")
     orders = load_json(BUILD / "orders.json", "발주 스냅샷(orders.json)")
-    order_notes_path = BUILD / "order_notes.json"
-    order_notes = load_json(order_notes_path, "발주 노트(order_notes.json)") \
-        if order_notes_path.exists() else {}
+    notes = load_json(BUILD / "order_notes.json", "발주 노트(order_notes.json)")
     carry = load_json(BUILD / "carry.json", "보존값(carry.json)")
     owners_map = load_json(BUILD / "owners.json", "담당자 매핑(owners.json)")
     tpl_path = BUILD / "template.html"
@@ -406,7 +403,7 @@ def main():
             [normalize_item(x) for x in sorted(standalone, key=lambda x: x["key"])]
 
     annotate_renewal(orders)
-    merge_order_notes(orders, order_notes, warn)
+    merge_order_notes(orders, notes, warn)
     fill_missing_order_matches(orders, sheet, warn)
     attach_po(items, orders)
 

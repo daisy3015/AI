@@ -477,7 +477,7 @@ h1,h2,h3,h4{font-weight:600;letter-spacing:-.028em;margin:0}
 .tg.red{background:var(--dns);color:var(--dnd)}
 .tg.yellow{background:var(--wns);color:var(--wnd)}
 .tg.purple{background:var(--pps);color:var(--ppd)}
-.tg.renewal-badge{background:#6a4bb0;color:#fff;border-color:#6a4bb0;font-weight:700}
+.tg.renewal-badge{background:#6a4bb0;color:#fff;font-weight:700;border:1px solid #6a4bb0}
 .tg.renewal-label{background:var(--pps);color:var(--ppd);border:1px solid var(--pp);font-weight:600}
 .tg.orange{background:var(--ors);color:var(--ord)}
 .tg.cyan{background:var(--cys);color:var(--cyd)}
@@ -605,8 +605,8 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
 .spectbl.slim td{font-size:11.5px;padding:8px 14px}
 .ordernote{margin-top:3px;color:var(--tx3);font-size:11px;line-height:1.5}
 .ordernote.renewal-note{color:var(--ppd);font-weight:550;word-break:break-word;white-space:pre-wrap}
-.order-source{padding:3px 8px;font-size:10px;vertical-align:middle;gap:4px;line-height:1.1}
-.order-source svg{width:11px;height:11px;fill:currentColor;flex:0 0 auto}
+.order-source{padding:3px 8px;font-size:10px;line-height:1.1;gap:4px;vertical-align:middle}
+.order-source .slack-mark{font-weight:800;font-size:12px;line-height:1;color:currentColor}
 .specnote{margin-top:11px;padding:11px 14px;border-radius:var(--r3);background:var(--wns);
   border:1px solid var(--wn);color:var(--wnd);font-size:11px}
 /* Slack 발주 채널 바로가기 — 브랜드 컬러로 강조 */
@@ -1335,17 +1335,16 @@ const isRenewalOrder=o=>o.renewal===true||o.kind==="리뉴얼";
 const renewalTag=o=>isRenewalOrder(o)
   ?` <span class="tg renewal-badge" title="리뉴얼 발주">R</span>`:"";
 const orderSourceTag=o=>{
-  const candidates=[o.orderNote?.src,o.noteSrc,o.slackUrl];
+  const candidates=[o.orderNote&&o.orderNote.src,o.noteSrc,o.slackUrl];
   const url=candidates.find(v=>/^https:\/\/[^/]*slack\.com\//i.test(String(v||"")))
     ||DB.slack?.url||"https://pharmabroshq.slack.com/archives/C09FCV7UHF1";
-    return ` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 15.2a2.1 2.1 1 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/></svg>원문</a>`;
-  return url?` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 15.2a2.1 2.1 0 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/><path d="M8.3 5.1a2.1 2.1 0 1 1 2.1-2.1v2.1zM8.3 6.2a2.1 2.1 0 0 1 0 4.2H3.1a2.1 2.1 0 1 1 0-4.2z"/><path d="M18.9 8.3a2.1 2.1 0 1 1 2.1 2.1h-2.1zM17.8 8.3a2.1 2.1 0 1 1-4.2 0V3.1a2.1 2.1 0 1 1 4.2 0z"/><path d="M15.7 18.9a2.1 2.1 0 1 1-2.1 2.1v-2.1zM15.7 17.8a2.1 2.1 0 1 1 0-4.2h5.2a2.1 2.1 0 1 1 0 4.2z"/></svg>원문</a>`:"";
+  return ` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><span class="slack-mark" aria-hidden="true">#</span>원문</a>`;
 };
 const orderNoteText=o=>o.orderNote?.note??o.note??"";
 const orderNoteTag=o=>{
   const note=orderNoteText(o);
   return note
-    ?`<div class="${isRenewalOrder(o)?"text-xs text-purple-600 mt-1 font-medium renewal-note":"ordernote"}">${isRenewalOrder(o)?"리뉴얼 ":""}${esc(note)}</div>`
+    ?`<div class="text-xs text-purple-600 mt-1 font-medium renewal-note">${isRenewalOrder(o)?"리뉴얼 ":""}${esc(note)}</div>`
     :"";
 };
 trackSeen(DB.items);            // SEEN 초기화 이후에 호출 (TDZ 방지)
@@ -1377,24 +1376,6 @@ function nmaker(s){
   s=String(s||"").toLowerCase().replace(/\(주\)|주식회사|㈜/g,"").replace(/[\s·\-&,\.\/\(\)]/g,"");
   for(const [a,b] of Object.entries(MAKER_ALIAS)) if(s.includes(a)) return b;
   return s;
-}
-const orderDateKey=s=>String(s||"").trim().replace(/[./]/g,"-").replace(/^(\d{2})-/,"20$1-");
-const orderNoteKey=o=>`${orderDateKey(o.date)}|${nname(o.product)}`;
-const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[orderNoteKey(o),{
-  renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,orderNote:o.orderNote,matchKey:o.matchKey,matchName:o.matchName
-}]));
-function mergeOrderAnnotations(orders){
-  return orders.map(o=>{
-    const saved=SNAP_ORDER_NOTES.get(orderNoteKey(o));
-    if(!saved) return o;
-    if(saved.renewal===true) o.renewal=true;
-    if(saved.note && !o.note) o.note=saved.note;
-    if(saved.noteSrc && !o.noteSrc) o.noteSrc=saved.noteSrc;
-    if(saved.orderNote && !o.orderNote) o.orderNote=saved.orderNote;
-    if(saved.matchKey && !o.matchKey) o.matchKey=saved.matchKey;
-    if(saved.matchName && !o.matchName) o.matchName=saved.matchName;
-    return o;
-  });
 }
 /* 발주 데이터 → 제품 매칭 + 제품별 집계 (동기화 후에도 재계산) */
 function crosscheck(){
@@ -1681,7 +1662,7 @@ async function syncAll(silent){
   /*  Slack (발주 의뢰) */
   try{
     const po=await querySlack();
-    if(po&&po.length){ DB.orders=mergeOrderAnnotations(po); SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
+    if(po&&po.length){ DB.orders=po; SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
   }catch(e){ SRC.slack.ok=false; SRC.slack.msg="연결 실패 — 스냅샷 사용"; errs.push("발주: "+e.message) }
 
   tagOrigin(DB.items);                              // 원산지 속성 재부여
