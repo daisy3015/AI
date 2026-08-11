@@ -685,7 +685,7 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
     </div>
     <button class="sb-sync" id="syncBtn" type="button">
       <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-      <span id="syncLbl">노션 최신 데이터 불러오기</span>
+      <span id="syncLbl">최신 상태 업데이트</span>
     </button>
   </div>
 
@@ -1682,7 +1682,7 @@ async function syncAll(silent){
     /* 세 소스가 모두 실패해 붙일 메시지조차 없는 경우 */
     if(!msgs.length && !errs.length) toast("불러올 최신 데이터가 없습니다 — 내장 스냅샷을 그대로 표시합니다","err");
   }
-  const L=$("#syncLbl"); if(L) L.textContent="노션 최신 데이터 불러오기";
+  const L=$("#syncLbl"); if(L) L.textContent="최신 상태 업데이트";
   $("#toast").classList.remove("withchar");
   b.classList.remove("busy"); autoLeft=NOTION_CONFIG.autoSyncMin*60; syncing=false;
 }
