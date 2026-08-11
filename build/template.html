@@ -1337,11 +1337,12 @@ function orderNewTag(o){
 const isRenewalOrder=o=>o.renewal===true||o.kind==="리뉴얼";
 const renewalTag=o=>isRenewalOrder(o)
   ?` <span class="tg renewal-badge" title="리뉴얼 발주">R</span>`:"";
-const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[`${String(o.date||"").trim()}|${nname(o.product)}`,{
+const orderSnapshotKey=o=>`${String(o.date||"").trim()}|${String(o.product||"").toLowerCase().replace(/[\s·\-&,\.\/\(\)\[\]]/g,"")}`;
+const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[orderSnapshotKey(o),{
   renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,orderNote:o.orderNote
 }]));
 const mergeOrderAnnotations=orders=>orders.map(o=>{
-  const saved=SNAP_ORDER_NOTES.get(`${String(o.date||"").trim()}|${nname(o.product)}`);
+  const saved=SNAP_ORDER_NOTES.get(orderSnapshotKey(o));
   if(!saved) return o;
   if(saved.renewal===true) o.renewal=true;
   if(saved.note!=null) o.note=saved.note;
