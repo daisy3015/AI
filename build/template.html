@@ -602,6 +602,7 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
 .spectbl.slim th{width:88px;font-variant-numeric:tabular-nums;font-weight:550}
 .spectbl.slim td{font-size:11.5px;padding:8px 14px}
 .ordernote{margin-top:3px;color:var(--tx3);font-size:11px;line-height:1.5}
+.ordernote.renewal-note{color:var(--ppd);font-weight:550}
 .specnote{margin-top:11px;padding:11px 14px;border-radius:var(--r3);background:var(--wns);
   border:1px solid var(--wn);color:var(--wnd);font-size:11px}
 /* Slack 발주 채널 바로가기 — 브랜드 컬러로 강조 */
@@ -1329,6 +1330,10 @@ function orderNewTag(o){
 const isRenewalOrder=o=>o.renewal===true||o.kind==="리뉴얼";
 const renewalTag=o=>isRenewalOrder(o)
   ?`<span class="tg purple" title="리뉴얼 발주">R</span> `:"";
+const orderSourceTag=o=>{
+  const url=o.noteSrc||o.gmailUrl||o.slackUrl;
+  return url?` <a class="lbtn" href="${esc(url)}" target="_blank" rel="noopener">원문</a>`:"";
+};
 trackSeen(DB.items);            // SEEN 초기화 이후에 호출 (TDZ 방지)
 
 let tT;
@@ -1833,7 +1838,7 @@ function openSheetSpec(r){
         <div class="poc"><div class="k">최근 발주일</div><div class="v sm">${esc(r.po.last||"–")}</div></div>
       </div>
       ${myOrders.length?`<table class="spectbl slim"><tbody>${myOrders.map(o=>
-        `<tr><th>${esc(o.date)}</th><td>${renewalTag(o)}${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${orderNewTag(o)}${o.note?`<div class="ordernote">${esc(o.note)}</div>`:""}</td></tr>`
+        `<tr><th>${esc(o.date)}</th><td>${renewalTag(o)}${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${orderNewTag(o)}${orderSourceTag(o)}${isRenewalOrder(o)?`<div class="ordernote renewal-note"><b>리뉴얼</b>${o.note?` · ${esc(o.note)}`:""}</div>`:(o.note?`<div class="ordernote">${esc(o.note)}</div>`:"")}</td></tr>`
       ).join("")}</tbody></table>`:""}
     </div>`:""}`;
   $("#mFoot").innerHTML=[
@@ -2190,12 +2195,12 @@ function renderPo(){
       const t=o.matchKey?BY_KEY[o.matchKey]:null;
       return `<tr>
         <td class="dt">${esc(o.date)}${orderNewTag(o)}</td>
-        <td class="nm">${t?`<button class="lk2" type="button" data-spec="${esc(o.matchKey)}" title="스펙 상세 보기">${esc(o.product)}</button>`:esc(o.product)}${t?newTag(t):""}${o.matchName&&o.matchName!==o.product?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">→ ${esc(o.matchName)}</div>`:""}${o.note?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">${esc(o.note)}</div>`:""}</td>
+        <td class="nm">${renewalTag(o)}${t?`<button class="lk2" type="button" data-spec="${esc(o.matchKey)}" title="스펙 상세 보기">${esc(o.product)}</button>`:esc(o.product)}${t?newTag(t):""}${o.matchName&&o.matchName!==o.product?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">→ ${esc(o.matchName)}</div>`:""}${o.note?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">${esc(o.note)}</div>`:""}</td>
         <td>${esc(o.vendor||"–")}${o.match==="name"&&t?`<div style="font-size:9.5px;color:var(--wnd)">시트: ${esc(t.maker||"미입력")}</div>`:""}</td>
         <td class="qt">${o.qty==null?'<span class="dsh">–</span>':nf(o.qty)} <span style="color:var(--tx3);font-weight:450">${esc(o.unit||"")}</span></td>
         <td class="dt">${o.due?`<span title="원문: ${esc(o.due)}">${esc(fmtDue(o.due,o.date))}</span>`:'<span class="dsh">–</span>'}</td>
         <td>${MATCH_TAG[o.match]||(o.isOverseas?'<span class="tg gray">대조 제외</span>':"")}</td>
-        <td><span class="tg gray">${esc(o.kind)}</span></td>
+        <td><span class="tg ${isRenewalOrder(o)?"purple":"gray"}">${isRenewalOrder(o)?"리뉴얼":esc(o.kind||"-")}</span></td>
         <td>${esc(o.author||"–")}</td>
       </tr>`;
     }).join("");

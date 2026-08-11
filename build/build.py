@@ -49,6 +49,13 @@ def norm(x):
     return re.sub(r"[^0-9a-z가-힣]", "", unicodedata.normalize("NFKC", str(x)).lower())
 
 
+def clean_order_text(v):
+    """발주 키 비교용 텍스트를 trim 하고 연속 공백을 한 칸으로 맞춘다."""
+    if v is None:
+        return ""
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", str(v)).strip())
+
+
 def datepart(v):
     """'2026-07-29 06:16:12Z' / '2026-07-29T...' → '2026-07-29'"""
     if not v:
@@ -224,14 +231,15 @@ def merge_order_notes(orders, notes, warn):
         if not isinstance(payload, dict) or "|" not in str(raw_key):
             warn.append(f"발주 노트 키 형식 오류: {raw_key}")
             continue
-        raw_date, raw_product = str(raw_key).split("|", 1)
+        raw_date, raw_product = (clean_order_text(part)
+                     for part in str(raw_key).split("|", 1))
         note_date, note_product = order_date(raw_date), norm(raw_product)
         hits = [o for o in orders
                 if (not note_date or order_date(o.get("date")) == note_date)
                 and note_product
-                and (note_product == norm(o.get("product"))
-                     or note_product in norm(o.get("product"))
-                     or norm(o.get("product")) in note_product)]
+            and (note_product == norm(clean_order_text(o.get("product")))
+                 or note_product in norm(clean_order_text(o.get("product")))
+                 or norm(clean_order_text(o.get("product"))) in note_product)]
         if not hits:
             warn.append(f"발주 노트 매칭 실패: {raw_key}")
             continue
