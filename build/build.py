@@ -194,6 +194,13 @@ def attach_po(items, orders):
         }
 
 
+def annotate_renewal(orders):
+    """리뉴얼 발주 여부를 명시적 bool 로 정규화 (이미 renewal 키가 있으면 그 값을 존중)"""
+    for o in orders:
+        if "renewal" not in o:
+            o["renewal"] = (o.get("kind") == "리뉴얼")
+
+
 def fill_missing_order_matches(orders, sheet, warn):
     """match 판단이 아예 없는 발주만 보수적으로 자동 매칭 (기존 판단은 절대 건드리지 않음)"""
     cand = [(norm(r["name"]), r) for r in sheet if len(norm(r["name"])) >= MATCH_MIN_LEN]
@@ -339,6 +346,7 @@ def main():
     items = [normalize_item(sheet_by_key[r["key"]]) for r in sheet] + \
             [normalize_item(x) for x in sorted(standalone, key=lambda x: x["key"])]
 
+    annotate_renewal(orders)
     fill_missing_order_matches(orders, sheet, warn)
     attach_po(items, orders)
 
