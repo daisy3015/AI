@@ -606,7 +606,7 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
 .ordernote{margin-top:3px;color:var(--tx3);font-size:11px;line-height:1.5}
 .ordernote.renewal-note{color:var(--ppd);font-weight:550;word-break:break-word;white-space:pre-wrap}
 .order-source{padding:3px 8px;font-size:10px;line-height:1.1;gap:4px;vertical-align:middle}
-.order-source .slack-mark{font-weight:800;font-size:12px;line-height:1;color:currentColor}
+.order-source svg{width:11px;height:11px;fill:currentColor;flex:0 0 auto}
 .specnote{margin-top:11px;padding:11px 14px;border-radius:var(--r3);background:var(--wns);
   border:1px solid var(--wn);color:var(--wnd);font-size:11px}
 /* Slack 발주 채널 바로가기 — 브랜드 컬러로 강조 */
@@ -1338,7 +1338,7 @@ const orderSourceTag=o=>{
   const candidates=[o.orderNote&&o.orderNote.src,o.noteSrc,o.slackUrl];
   const url=candidates.find(v=>/^https:\/\/[^/]*slack\.com\//i.test(String(v||"")))
     ||DB.slack?.url||"https://pharmabroshq.slack.com/archives/C09FCV7UHF1";
-  return ` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><span class="slack-mark" aria-hidden="true">#</span>원문</a>`;
+  return ` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 15.2a2.1 2.1 1 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/><path d="M8.3 5.1a2.1 2.1 1 1 1 2.1-2.1v2.1zM8.3 6.2a2.1 2.1 1 1 1 0-4.2z"/><path d="M18.9 8.3a2.1 2.1 1 1 1 2.1 2.1h-2.1zM17.8 8.3a2.1 2.1 1 1 1-4.2 0V3.1a2.1 2.1 1 1 1 2.1 2.1z"/><path d="M15.7 18.9a2.1 2.1 1 1 1 2.1 2.1v-2.1zM15.7 17.8a2.1 2.1 1 1 1 0-4.2z"/></svg>원문</a>`;
 };
 const orderNoteText=o=>o.orderNote?.note??o.note??"";
 const orderNoteTag=o=>{
