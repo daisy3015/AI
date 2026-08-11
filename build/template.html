@@ -1841,7 +1841,7 @@ function openSheetSpec(r){
         <div class="poc"><div class="k">최근 발주일</div><div class="v sm">${esc(r.po.last||"–")}</div></div>
       </div>
       ${myOrders.length?`<table class="spectbl slim"><tbody>${myOrders.map(o=>
-        `<tr><th>${esc(o.date)}</th><td>${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${renewalTag(o)}${orderNewTag(o)}${orderSourceTag(o)}${isRenewalOrder(o)?(o.note?`<div class="ordernote renewal-note"><b>리뉴얼</b> · ${esc(o.note)}</div>`:`<div class="ordernote renewal-note"><b>리뉴얼</b></div>`):(o.note?`<div class="ordernote">${esc(o.note)}</div>`:"")}</td></tr>`
+        `<tr><th>${esc(o.date)}</th><td>${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${renewalTag(o)}${orderNewTag(o)}${orderSourceTag(o)}${o.note?`<div class="ordernote ${isRenewalOrder(o)?"renewal-note":""}">${esc(o.note)}</div>`:""}</td></tr>`
       ).join("")}</tbody></table>`:""}
     </div>`:""}`;
   $("#mFoot").innerHTML=[
@@ -2197,7 +2197,7 @@ function renderPo(){
     $("#poTb").innerHTML=S.map(o=>{
       const t=o.matchKey?BY_KEY[o.matchKey]:null;
       return `<tr>
-        <td class="dt">${esc(o.date)}${orderNewTag(o)}</td>
+        <td class="dt">${esc(o.date)}${orderNewTag(o)}${renewalTag(o)}</td>
         <td class="nm">${t?`<button class="lk2" type="button" data-spec="${esc(o.matchKey)}" title="스펙 상세 보기">${esc(o.product)}</button>`:esc(o.product)}${renewalTag(o)}${t?newTag(t):""}${o.matchName&&o.matchName!==o.product?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">→ ${esc(o.matchName)}</div>`:""}${o.note?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">${esc(o.note)}</div>`:""}</td>
         <td>${esc(o.vendor||"–")}${o.match==="name"&&t?`<div style="font-size:9.5px;color:var(--wnd)">시트: ${esc(t.maker||"미입력")}</div>`:""}</td>
         <td class="qt">${o.qty==null?'<span class="dsh">–</span>':nf(o.qty)} <span style="color:var(--tx3);font-weight:450">${esc(o.unit||"")}</span></td>
