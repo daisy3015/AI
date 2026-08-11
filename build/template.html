@@ -1335,14 +1335,17 @@ const isRenewalOrder=o=>o.renewal===true||o.kind==="리뉴얼";
 const renewalTag=o=>isRenewalOrder(o)
   ?` <span class="tg renewal-badge" title="리뉴얼 발주">R</span>`:"";
 const orderSourceTag=o=>{
-  const url=o.noteSrc||o.gmailUrl||o.slackUrl;
+  const candidates=[o.orderNote?.src,o.noteSrc,o.slackUrl];
+  const url=candidates.find(v=>/^https:\/\/[^/]*slack\.com\//i.test(String(v||"")))
+    ||DB.slack?.url||"https://pharmabroshq.slack.com/archives/C09FCV7UHF1";
+    return ` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 15.2a2.1 2.1 1 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/></svg>원문</a>`;
   return url?` <a class="lbtn order-source" href="${esc(url)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 15.2a2.1 2.1 0 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/><path d="M8.3 5.1a2.1 2.1 0 1 1 2.1-2.1v2.1zM8.3 6.2a2.1 2.1 0 0 1 0 4.2H3.1a2.1 2.1 0 1 1 0-4.2z"/><path d="M18.9 8.3a2.1 2.1 0 1 1 2.1 2.1h-2.1zM17.8 8.3a2.1 2.1 0 1 1-4.2 0V3.1a2.1 2.1 0 1 1 4.2 0z"/><path d="M15.7 18.9a2.1 2.1 0 1 1-2.1 2.1v-2.1zM15.7 17.8a2.1 2.1 0 1 1 0-4.2h5.2a2.1 2.1 0 1 1 0 4.2z"/></svg>원문</a>`:"";
 };
-const orderNoteText=o=>o.note||o.orderNote?.note||"";
+const orderNoteText=o=>o.orderNote?.note??o.note??"";
 const orderNoteTag=o=>{
   const note=orderNoteText(o);
   return note
-    ?`<div class="ordernote ${isRenewalOrder(o)?"renewal-note":""}">${isRenewalOrder(o)?"리뉴얼 ":""}${esc(note)}</div>`
+    ?`<div class="${isRenewalOrder(o)?"text-xs text-purple-600 mt-1 font-medium renewal-note":"ordernote"}">${isRenewalOrder(o)?"리뉴얼 ":""}${esc(note)}</div>`
     :"";
 };
 trackSeen(DB.items);            // SEEN 초기화 이후에 호출 (TDZ 방지)
@@ -1378,7 +1381,7 @@ function nmaker(s){
 const orderDateKey=s=>String(s||"").trim().replace(/[./]/g,"-").replace(/^(\d{2})-/,"20$1-");
 const orderNoteKey=o=>`${orderDateKey(o.date)}|${nname(o.product)}`;
 const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[orderNoteKey(o),{
-  renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,matchKey:o.matchKey,matchName:o.matchName
+  renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,orderNote:o.orderNote,matchKey:o.matchKey,matchName:o.matchName
 }]));
 function mergeOrderAnnotations(orders){
   return orders.map(o=>{
@@ -1387,6 +1390,7 @@ function mergeOrderAnnotations(orders){
     if(saved.renewal===true) o.renewal=true;
     if(saved.note && !o.note) o.note=saved.note;
     if(saved.noteSrc && !o.noteSrc) o.noteSrc=saved.noteSrc;
+    if(saved.orderNote && !o.orderNote) o.orderNote=saved.orderNote;
     if(saved.matchKey && !o.matchKey) o.matchKey=saved.matchKey;
     if(saved.matchName && !o.matchName) o.matchName=saved.matchName;
     return o;

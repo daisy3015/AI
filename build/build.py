@@ -250,6 +250,11 @@ def merge_order_notes(orders, notes, warn):
             order["note"] = payload["note"]
         if payload.get("src"):
             order["noteSrc"] = payload["src"]
+        order["orderNote"] = {
+            "renewal": bool(payload.get("renewal", order.get("renewal"))),
+            "note": payload.get("note"),
+            "src": payload.get("src"),
+        }
 
 
 def fill_missing_order_matches(orders, sheet, warn):
