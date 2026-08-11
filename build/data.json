@@ -17,7 +17,7 @@
   "생산",
   "입고"
  ],
- "synced_at": "2026-08-11T16:26:49+09:00",
+ "synced_at": "2026-08-11T16:29:46+09:00",
  "items": [
   {
    "key": "S56",
@@ -3229,7 +3229,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "renewal": true,
+   "note": "콜라겐 1,000달톤→평균 350달톤 · 제조원가 10,500→7,750원/set",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351120000000"
   },
   {
    "ts": "1778740140.000000",

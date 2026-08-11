@@ -2198,7 +2198,7 @@ function renderPo(){
       const t=o.matchKey?BY_KEY[o.matchKey]:null;
       return `<tr>
         <td class="dt">${esc(o.date)}${orderNewTag(o)}${renewalTag(o)}</td>
-        <td class="nm">${t?`<button class="lk2" type="button" data-spec="${esc(o.matchKey)}" title="스펙 상세 보기">${esc(o.product)}</button>`:esc(o.product)}${renewalTag(o)}${t?newTag(t):""}${o.matchName&&o.matchName!==o.product?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">→ ${esc(o.matchName)}</div>`:""}${o.note?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">${esc(o.note)}</div>`:""}</td>
+        <td class="nm">${t?`<button class="lk2" type="button" data-spec="${esc(o.matchKey)}" title="스펙 상세 보기">${esc(o.product)}</button>`:esc(o.product)}${t?newTag(t):""}${o.matchName&&o.matchName!==o.product?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">→ ${esc(o.matchName)}</div>`:""}${o.note?`<div style="font-size:9.5px;color:var(--tx3);font-weight:450">${esc(o.note)}</div>`:""}</td>
         <td>${esc(o.vendor||"–")}${o.match==="name"&&t?`<div style="font-size:9.5px;color:var(--wnd)">시트: ${esc(t.maker||"미입력")}</div>`:""}</td>
         <td class="qt">${o.qty==null?'<span class="dsh">–</span>':nf(o.qty)} <span style="color:var(--tx3);font-weight:450">${esc(o.unit||"")}</span></td>
         <td class="dt">${o.due?`<span title="원문: ${esc(o.due)}">${esc(fmtDue(o.due,o.date))}</span>`:'<span class="dsh">–</span>'}</td>
