@@ -343,6 +343,10 @@ h1,h2,h3,h4{font-weight:600;letter-spacing:-.028em;margin:0}
 .step::after,.step::before{content:none}
 .step em{font-style:normal;width:17px;height:17px;border-radius:50%;font-size:9px;font-weight:600;
   display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--s3);color:var(--tx3)}
+.spec-search{position:relative;display:flex;align-items:center;margin:0 14px 12px;max-width:360px}
+.spec-search svg{position:absolute;left:10px;width:14px;height:14px;stroke:var(--tx3);fill:none;stroke-width:1.8;pointer-events:none}
+.spec-search input{width:100%;padding:8px 10px 8px 31px;border:1px solid var(--bd);border-radius:var(--r3);background:var(--s1);color:var(--tx);font:inherit;font-size:11.5px;outline:none}
+.spec-search input:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acs)}
 /* 단계 그룹 컬러 — 타임라인과 동일한 파스텔 팔레트로 통일 */
 .step.g1{background:var(--pt-purple);color:var(--pt-purpleD)} .step.g1 em{background:var(--pt-purpleD);color:#fff}
 .step.g2{background:var(--pt-orange);color:var(--pt-orangeD)} .step.g2 em{background:var(--pt-orangeD);color:#fff}
@@ -483,7 +487,7 @@ h1,h2,h3,h4{font-weight:600;letter-spacing:-.028em;margin:0}
 .tg.cyan{background:var(--cys);color:var(--cyd)}
 /* ── 담당자 뱃지 고정 컬러 ── */
 .tg.own-jake  {background:#EBF5FF;color:#1D4ED8}
-.tg.own-silvia{background:#FFEEE2;color:#B4531A}
+.tg.own-silvia{background:#F1E8FB;color:#6A4BB0}
 .tg.own-daisy {background:#FEF9C3;color:#854D0E}
 .tg.own-etc   {background:#F1F3F7;color:#5B6474}
 [data-theme="dusk"] .tg.own-jake  {background:#1e2c4a;color:#a8c6f7}
@@ -522,6 +526,7 @@ thead th.srt .ar{opacity:1;color:var(--ac)}
 /* 모든 데이터 테이블 셀은 수직 중앙 기준선 정렬 */
 table th,table td{vertical-align:middle}
 tbody td{padding:9px 13px;border-bottom:1px solid var(--grid);font-size:11.5px;vertical-align:middle;line-height:1.45}
+.ts table td{letter-spacing:-.01em}
 /* 행 전체는 클릭 대상이 아님 — 기본 화살표 커서 유지.
    실제 클릭(상세 팝업)은 '제품명' 셀 안의 .lk2 버튼에만 걸립니다. */
 tbody tr{cursor:default;transition:.13s}
@@ -536,6 +541,8 @@ td.nm{font-weight:550;min-width:208px;color:var(--tx)}
 .lk2:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:3px}
 tbody tr:hover .lk2{color:var(--acd)}
 td.dt,td.qt{font-variant-numeric:tabular-nums;color:var(--tx2);white-space:nowrap;font-size:11px}
+.ts td.dt .tg{margin-left:.5rem}
+.po-author{padding-left:.5rem;letter-spacing:-.01em}
 td.qt{text-align:right;font-weight:550;color:var(--tx)}
 .dsh{color:var(--tx3)}
 .mt{padding:48px 20px;text-align:center;color:var(--tx3)}
@@ -783,14 +790,6 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
         <h3>발주 크로스체크</h3>
         <span class="note num" id="poNote"></span>
         <div class="pgrp">
-        <!-- Slack 발주 채널 바로가기 (해외 발주 탭에서는 숨김) -->
-        <a class="pobtn" id="poSlack" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5.1 15.2a2.1 2.1 0 1 1-2.1-2.1h2.1zM6.2 15.2a2.1 2.1 0 0 1 4.2 0v5.2a2.1 2.1 0 0 1-4.2 0z"/>
-            <path d="M8.3 5.1a2.1 2.1 0 1 1 2.1-2.1v2.1zM8.3 6.2a2.1 2.1 0 0 1 0 4.2H3.1a2.1 2.1 0 0 1 0-4.2z"/>
-            <path d="M18.9 8.3a2.1 2.1 0 1 1 2.1 2.1h-2.1zM17.8 8.3a2.1 2.1 0 0 1-4.2 0V3.1a2.1 2.1 0 0 1 4.2 0z"/>
-            <path d="M15.7 18.9a2.1 2.1 0 1 1-2.1 2.1v-2.1zM15.7 17.8a2.1 2.1 0 0 1 0-4.2h5.2a2.1 2.1 0 0 1 0 4.2z"/>
-          </svg>Slack 발주 채널</a>
         <div class="seg2" id="poMode"><button class="on" data-m="list">발주 내역</button><button data-m="prod">제품별 집계</button></div>
         </div>
       </div>
@@ -807,6 +806,10 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
       <button class="kpi k1 static"><span class="glow"></span><div class="lb">전체 보유 품목</div><div class="vl" id="s1">0<small>건</small></div></button>
     </div>
     <div class="otabs" id="otabs" role="tablist" aria-label="원산지 구분"></div>
+    <label class="spec-search" for="specSearch">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="specSearch" type="search" placeholder="제품명 또는 브랜드명 검색..." autocomplete="off">
+    </label>
     <div class="bgrid" id="bgrid"></div>
     <div class="bdet" id="bdet"><div class="card">
       <div class="bdhd">
@@ -815,7 +818,7 @@ td.qt{text-align:right;font-weight:550;color:var(--tx)}
         <button class="bdclose" id="bdClose">닫기</button>
       </div>
       <div class="ts"><table><thead><tr id="bdTh"></tr></thead><tbody id="bdTb"></tbody></table></div>
-      <div class="mt" id="bdEmpty" style="display:none"><img class="ch-empty" alt="" data-ch="empty">조건에 맞는 품목이 없습니다.</div>
+      <div class="mt" id="bdEmpty" style="display:none"><img class="ch-empty" alt="" data-ch="empty">검색 결과가 없습니다</div>
     </div></div>
   </section>
 
@@ -1700,14 +1703,13 @@ setInterval(()=>{
   autoLeft--;
   if(autoLeft<=0){ autoLeft=NOTION_CONFIG.autoSyncMin*60; syncAll(true) }
 },1000);
-$("#poSlack").href=DB.slack.url;
 $("#lnkSheet").href=DB.sheetUrl;
 $("#lnkNotion").href=NOTION_CONFIG.pageUrl||DB.notionUrl;
 $("#lnkSlack").href=DB.slack.url;
 /* 스냅샷이 구버전(13단계)이어도 '감리 통보'는 렌더 단계에서 제외 */
 DB.process=(DB.process||[]).filter(s=>s!=="감리 통보");
 /* 단계 카드는 [번호 + 단계명]만 노출 — 건수 뱃지 없음 */
-$("#steps").innerHTML=DB.process.map((s,i)=>`<div class="step ${PROC_G[i+1]||""}"><em>${i+1}</em>${esc(s)}</div>`).join("");
+$("#steps").innerHTML=DB.process.map((s,i)=>`<div class="step ${PROC_G[i+1]||""}">${esc(s)}</div>`).join("");
 
 /* ═══════════ 스펙시트 모달 ═══════════ */
 let lastFocus=null;
@@ -1840,14 +1842,7 @@ function openSheetSpec(r){
             <path d="M15.7 18.9a2.1 2.1 0 1 1-2.1 2.1v-2.1zM15.7 17.8a2.1 2.1 0 0 1 0-4.2h5.2a2.1 2.1 0 0 1 0 4.2z"/>
           </svg>Slack에서 보기</a>`
         : ""}</h4>
-      <div class="pobox">
-        <div class="poc"><div class="k">누적 발주 수량</div><div class="v">${nf(r.po.qty)}<small>${esc(r.po.unit||"set")}</small></div></div>
-        <div class="poc"><div class="k">발주 횟수</div><div class="v">${r.po.count}<small>회</small></div></div>
-        <div class="poc"><div class="k">최근 발주일</div><div class="v sm">${esc(r.po.last||"–")}</div></div>
-      </div>
-      ${myOrders.length?`<table class="spectbl slim"><tbody>${myOrders.map(o=>
-        `<tr><th>${esc(o.date)}</th><td>${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${orderSourceTag(o)}${renewalTag(o)}${orderNewTag(o)}${orderNoteTag(o)}</td></tr>`
-      ).join("")}</tbody></table>`:""}
+        <h4>발주 현황</h4>
     </div>`:""}`;
   $("#mFoot").innerHTML=[
     (r.src==="notion"||r.src==="both")?notionBtn(r,"Notion 페이지 열기"):"",
@@ -2186,8 +2181,6 @@ function renderPoTabs(){
 function renderPo(){
   /* 상단 요약 카운터 없음 — 목록 테이블과 필터만 노출 */
   renderPoTabs();
-  /* Slack 발주 채널 버튼은 해외 발주만 보고 있을 때 숨깁니다 */
-  const pb=$("#poSlack"); if(pb) pb.style.display = (poOriginF==="overseas") ? "none" : "";
   const os=fltOrders();
   /* 구체적 날짜 대신 직관적인 기준 표기 */
   $("#poNote").textContent=`${PO_FROM_LABEL} 발주 기준 · ${os.length}건`;
@@ -2209,7 +2202,7 @@ function renderPo(){
         <td class="dt">${o.due?`<span title="원문: ${esc(o.due)}">${esc(fmtDue(o.due,o.date))}</span>`:'<span class="dsh">–</span>'}</td>
         <td>${MATCH_TAG[o.match]||(o.isOverseas?'<span class="tg gray">대조 제외</span>':"")}</td>
         <td><span class="tg ${isRenewalOrder(o)?"renewal-label":"gray"}">${isRenewalOrder(o)?"리뉴얼":esc(o.kind||"-")}</span></td>
-        <td>${esc(o.author||"–")}</td>
+        <td class="po-author">${esc(o.author||"–")}</td>
       </tr>`;
     }).join("");
     $$("#poTh th").forEach(th=>th.addEventListener("click",()=>{
@@ -2276,7 +2269,7 @@ function renderOriginTabs(){
 function renderBrandGrid(rows){
   const bm={};rows.forEach(r=>{(bm[r.brand]=bm[r.brand]||[]).push(r)});
   const bs=Object.entries(bm).sort((a,b)=>b[1].length-a[1].length);
-  if(!bs.length){ $("#bgrid").innerHTML=`<div class="mt" style="grid-column:1/-1"><img class="ch-empty" alt="" src="${CHARS.empty}">조건에 맞는 품목이 없습니다.</div>`; return }
+  if(!bs.length){ $("#bgrid").innerHTML=`<div class="mt" style="grid-column:1/-1"><img class="ch-empty" alt="" src="${CHARS.empty}">검색 결과가 없습니다</div>`; return }
   $("#bgrid").innerHTML=
     `<button class="bcard all ${selBrand===ALL?"sel":""}" data-brand="${ALL}">
       <div class="bn">전체 브랜드</div>
@@ -2314,6 +2307,7 @@ function renderBrandDetail(rows){
     if(!A&&!B)return 0;if(!A)return 1;if(!B)return -1;
     return String(A).localeCompare(String(B),"ko")*bdSortD});
   $("#bdEmpty").style.display=S.length?"none":"block";
+  if(!S.length) $("#bdEmpty").innerHTML=`<img class="ch-empty" alt="" src="${CHARS.empty}">검색 결과가 없습니다`;
   $("#bdTb").innerHTML=S.map(r=>`<tr>
       <td class="nm"><button class="lk2" type="button" data-spec="${esc(r.key)}" title="스펙 상세 보기">${esc(r.name)}</button>${newTag(r)}</td>
       <td>${r.ptype?`<span class="tg gray">${esc(r.ptype)}</span>`:'<span class="dsh">–</span>'}</td>
@@ -2401,10 +2395,11 @@ function goView(v){
   /* 로고 클릭 → 대시보드 홈(초기 상태)으로 */
   $("#homeBtn").addEventListener("click",()=>{ goView("dev"); toast("대시보드 홈으로 초기화했습니다") });
   /* 검색창 : 300ms 디바운스 — 타이핑이 멈춘 뒤 한 번만 필터링 */
-  let t;$("#fQ").addEventListener("input",e=>{clearTimeout(t);t=setTimeout(()=>{F.q=e.target.value;render()},300)});
+  let t;$("#fQ").addEventListener("input",e=>{clearTimeout(t);t=setTimeout(()=>{F.q=e.target.value;$("#specSearch").value=F.q;render()},300)});
+  $("#specSearch").addEventListener("input",e=>{F.q=e.target.value;$("#fQ").value=F.q;render()});
   $("#reset").addEventListener("click",()=>{
     Object.keys(F).forEach(k=>F[k]="");Object.keys(M).forEach(id=>$("#"+id).value="");
-    $("#fQ").value="";kpiF=null;srcF="";selBrand=null;originF="all";poOriginF="all";$("#bdet").classList.remove("on");
+    $("#fQ").value="";$("#specSearch").value="";kpiF=null;srcF="";selBrand=null;originF="all";poOriginF="all";$("#bdet").classList.remove("on");
     $$(".kpi").forEach(e=>e.classList.remove("active"));
     render();
   });
