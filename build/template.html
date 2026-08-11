@@ -1359,6 +1359,23 @@ function nmaker(s){
   for(const [a,b] of Object.entries(MAKER_ALIAS)) if(s.includes(a)) return b;
   return s;
 }
+const orderDateKey=s=>String(s||"").trim().replace(/[./]/g,"-").replace(/^(\d{2})-/,"20$1-");
+const orderNoteKey=o=>`${orderDateKey(o.date)}|${nname(o.product)}`;
+const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[orderNoteKey(o),{
+  renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,matchKey:o.matchKey,matchName:o.matchName
+}]));
+function mergeOrderAnnotations(orders){
+  return orders.map(o=>{
+    const saved=SNAP_ORDER_NOTES.get(orderNoteKey(o));
+    if(!saved) return o;
+    if(saved.renewal===true) o.renewal=true;
+    if(saved.note && !o.note) o.note=saved.note;
+    if(saved.noteSrc && !o.noteSrc) o.noteSrc=saved.noteSrc;
+    if(saved.matchKey && !o.matchKey) o.matchKey=saved.matchKey;
+    if(saved.matchName && !o.matchName) o.matchName=saved.matchName;
+    return o;
+  });
+}
 /* 발주 데이터 → 제품 매칭 + 제품별 집계 (동기화 후에도 재계산) */
 function crosscheck(){
   computeLatestOrders();                    // 최신 발주 N건 갱신
@@ -1644,7 +1661,7 @@ async function syncAll(silent){
   /*  Slack (발주 의뢰) */
   try{
     const po=await querySlack();
-    if(po&&po.length){ DB.orders=po; SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
+    if(po&&po.length){ DB.orders=mergeOrderAnnotations(po); SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
   }catch(e){ SRC.slack.ok=false; SRC.slack.msg="연결 실패 — 스냅샷 사용"; errs.push("발주: "+e.message) }
 
   tagOrigin(DB.items);                              // 원산지 속성 재부여
