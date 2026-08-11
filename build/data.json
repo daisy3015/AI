@@ -17,7 +17,7 @@
   "생산",
   "입고"
  ],
- "synced_at": "2026-08-11T17:01:31+09:00",
+ "synced_at": "2026-08-11T17:06:41+09:00",
  "items": [
   {
    "key": "S56",
@@ -2750,7 +2750,6 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false,
    "match": "full",
    "matchKey": "S8",
    "matchName": "파이토 레드큐민",
@@ -2770,7 +2769,6 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false,
    "match": "full",
    "matchKey": "S14",
    "matchName": "썬 비타민D3 & K2",
@@ -2790,7 +2788,6 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false,
    "match": "full",
    "matchKey": "S56",
    "matchName": "리브라인",
@@ -2813,8 +2810,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1784009593.794869",
@@ -2833,8 +2829,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1784008680.000000",
@@ -2853,8 +2848,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1783933770.505879",
@@ -2874,7 +2868,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "오메가3 원료 인상 전 재고 확보 목적 · 20,000→23,900원/set 인상 예상",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1783933770505879"
   },
   {
    "ts": "1783670000.000000",
@@ -2893,8 +2888,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1783669680.000000",
@@ -2913,8 +2907,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1783500000.000000",
@@ -2933,8 +2926,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1783499220.000000",
@@ -2953,8 +2945,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1782900840.000000",
@@ -2974,7 +2965,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "단가 15,800→16,050원/set 인상 · 초도 발주 시 낮게 설정된 원료단가를 재발주부터 정상 반영 · 제조사 실수 인정으로 인상폭 1.5% 로 최소화",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1782900840000000"
   },
   {
    "ts": "1782897720.000000",
@@ -2993,8 +2985,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1782808392.215009",
@@ -3014,7 +3005,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "제조원가 4,400원(▼80원) · 발주금액 440,000원 절감 · 납기 앞당기기 위해 제조사와 조율 중",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1782808392215009"
   },
   {
    "ts": "1782281460.000000",
@@ -3034,7 +3026,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "제조사 이관 · 제조원가 5,960원(▼310원) · 코렌칼슘 500mg(▲100mg) · 산화+글루콘산마그네슘 250mg(▲50mg) · 비타민D3 25mcg(▲12.5mcg) · 비타민K2 원료 MenaQ7→K2VITAL · 정제 1,400mg/정(▲200mg)",
+   "renewal": true,
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1782277871857239"
   },
   {
    "ts": "1782114480.000000",
@@ -3053,8 +3047,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1781669760.000000",
@@ -3073,8 +3066,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1781584560.000000",
@@ -3094,7 +3086,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "발주수량 4,000→6,000set 상향 · 발주금액 22,660,000→33,990,000원(VAT+)",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1781584560000000"
   },
   {
    "ts": "1781583900.000000",
@@ -3113,8 +3106,7 @@
    "makerOk": false,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1781583308.320889",
@@ -3133,8 +3125,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1780421160.000000",
@@ -3153,8 +3144,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1779935820.000000",
@@ -3174,7 +3164,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "제조사 이관 NPK→아미코젠 · 관능 개선(과립화 공정 추가, 당알콜 배합 조정) · 빌베리 원료 상표화 BilOrigin®",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779935820000000"
   },
   {
    "ts": "1779935280.000000",
@@ -3193,8 +3184,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1779351120.000000",
@@ -3214,14 +3204,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
+   "note": "콜라겐 1,000달톤→평균 350달톤 · 워터믹스 섭취 가능하도록 수용도 개선 · 비타민C 100→200mg · 제조원가 10,500→7,750원/set · MOQ 6,700→5,000set(초도 6,000set) · 관능 내부평가 평균 7/10점 이상 (이상 약사님 의견 반영)",
    "renewal": true,
-   "note": "콜라겐 1,000달톤→평균 350달톤 · 제조원가 10,500→7,750원/set",
-   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351120000000",
-   "orderNote": {
-    "renewal": true,
-    "note": "콜라겐 1,000달톤→평균 350달톤 · 제조원가 10,500→7,750원/set",
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351120000000"
-   }
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779351173530979"
   },
   {
    "ts": "1778740140.000000",
@@ -3241,14 +3226,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": true,
    "note": "제조원가 7,950→7,200원/set(▼750원) · 발주비용 37,603,500→34,056,000원(3,547,500원 절감) · 맛 개선(아르기닌 특유취 개선, 믹스베리맛 유지) · 내용물 색 변경",
-   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1778740140000000",
-   "orderNote": {
-    "renewal": true,
-    "note": "제조원가 7,950→7,200원/set(▼750원) · 발주비용 37,603,500→34,056,000원(3,547,500원 절감) · 맛 개선(아르기닌 특유취 개선, 믹스베리맛 유지) · 내용물 색 변경",
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1778740140000000"
-   }
+   "renewal": true,
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1779157764645859"
   },
   {
    "ts": "1778217240.000000",
@@ -3267,8 +3247,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1778212620.000000",
@@ -3287,8 +3266,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1777014240.000000",
@@ -3307,8 +3285,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1776408960.000000",
@@ -3327,8 +3304,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1776324280.000000",
@@ -3347,8 +3323,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1775977980.000000",
@@ -3367,8 +3342,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1775974020.000000",
@@ -3387,8 +3361,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1775291880.000000",
@@ -3407,8 +3380,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1774844700.000000",
@@ -3427,8 +3399,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1774920300.000000",
@@ -3448,14 +3419,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
+   "note": "정제 사이즈 1,000→800mg · 정제컬러 노란색 코팅→투명코팅 · 포장 병→PVDC 10구 PTP · 포장 변경에 따른 케이스 사이즈·디자인 수정 · 패키지 변경에 따른 상세페이지 수정",
    "renewal": true,
-   "note": null,
-   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774920300000000",
-   "orderNote": {
-    "renewal": true,
-    "note": null,
-    "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774920300000000"
-   }
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774920324490829"
   },
   {
    "ts": "1774834860.000000",
@@ -3475,7 +3441,8 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "아연 1.5mg→기능성 미표기 · 셀레늄 20mcg · 복숭아향 천연향으로 조정 · 케이스 디자인 수정",
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1774834860000000"
   },
   {
    "ts": "1774244100.000000",
@@ -3494,8 +3461,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1773912600.000000",
@@ -3514,8 +3480,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1773907320.000000",
@@ -3534,8 +3499,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1773906720.000000",
@@ -3554,8 +3518,7 @@
    "makerOk": false,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1773894600.000000",
@@ -3574,8 +3537,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1773722940.000000",
@@ -3594,8 +3556,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1772673360.000000",
@@ -3614,8 +3575,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1772529360.000000",
@@ -3635,7 +3595,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "PTP 디자인 리뉴얼 · 단상자 표시사항 통일을 위한 문구 수정 반영 예정",
+   "renewal": true,
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1772529371451269"
   },
   {
    "ts": "1771980480.000000",
@@ -3654,8 +3616,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1771919220.000000",
@@ -3674,8 +3635,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1771561200.000000",
@@ -3694,8 +3654,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1770604440.000000",
@@ -3714,8 +3673,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1769673060.000000",
@@ -3734,8 +3692,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1769652360.000000",
@@ -3754,8 +3711,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1769647260.000000",
@@ -3774,8 +3730,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1769576220.000000",
@@ -3794,8 +3749,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1769072100.000000",
@@ -3814,8 +3768,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1768787640.000000",
@@ -3835,7 +3788,9 @@
    "channel": "slack",
    "isOverseas": false,
    "origin": "domestic",
-   "renewal": false
+   "note": "패키지 리뉴얼 · 견적가 8,870→9,220원/set(350원 인상) · 섭취 시 주의사항 앞 숫자 삭제 · 파마브로스 주소 업데이트 · 케이스 주표시면 소구문구 추가 · YDY 로고 수정 · PTP 소구문구 추가 / 최종단가 9,370원/set 확정(단상자 디자인 리뉴얼로 300→450원/pc, 3/27 공유)",
+   "renewal": true,
+   "noteSrc": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1768787699320049"
   },
   {
    "ts": "1768447320.000000",
@@ -3854,8 +3809,7 @@
    "makerOk": null,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1768287600.000000",
@@ -3874,8 +3828,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1767689160.000000",
@@ -3894,8 +3847,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1766122- 0",
@@ -3914,8 +3866,7 @@
    "makerOk": true,
    "channel": "slack",
    "isOverseas": false,
-   "origin": "domestic",
-   "renewal": false
+   "origin": "domestic"
   },
   {
    "ts": "1785000000.000000",
@@ -3937,8 +3888,7 @@
    "makerOk": null,
    "channel": "gmail",
    "isOverseas": true,
-   "origin": "overseas",
-   "renewal": false
+   "origin": "overseas"
   },
   {
    "ts": "1785000001.000000",
@@ -3960,8 +3910,7 @@
    "makerOk": null,
    "channel": "gmail",
    "isOverseas": true,
-   "origin": "overseas",
-   "renewal": false
+   "origin": "overseas"
   },
   {
    "ts": "1785000002.000000",
@@ -3983,8 +3932,7 @@
    "makerOk": null,
    "channel": "gmail",
    "isOverseas": true,
-   "origin": "overseas",
-   "renewal": false
+   "origin": "overseas"
   },
   {
    "ts": "1785000003.000000",
@@ -4006,8 +3954,7 @@
    "makerOk": null,
    "channel": "gmail",
    "isOverseas": true,
-   "origin": "overseas",
-   "renewal": false
+   "origin": "overseas"
   },
   {
    "ts": "1785000004.000000",
@@ -4029,8 +3976,7 @@
    "makerOk": null,
    "channel": "gmail",
    "isOverseas": true,
-   "origin": "overseas",
-   "renewal": false
+   "origin": "overseas"
   }
  ],
  "slack": {

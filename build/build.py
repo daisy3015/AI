@@ -49,27 +49,6 @@ def norm(x):
     return re.sub(r"[^0-9a-z가-힣]", "", unicodedata.normalize("NFKC", str(x)).lower())
 
 
-def clean_order_text(v):
-    """발주 키 비교용 텍스트의 앞뒤·중복 공백을 정규화한다."""
-    if v is None:
-        return ""
-    return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", str(v)).strip())
-
-
-def order_date(v):
-    """발주 키 날짜를 YYYY-MM-DD 로 정규화한다."""
-    if not v:
-        return None
-    s = clean_order_text(v).replace("/", "-").replace(".", "-")
-    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s)
-    if m:
-        return f"{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    m = re.match(r"^(\d{2})-(\d{1,2})-(\d{1,2})", s)
-    if m:
-        return f"20{m.group(1)}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-    return datepart(s)
-
-
 def datepart(v):
     """'2026-07-29 06:16:12Z' / '2026-07-29T...' → '2026-07-29'"""
     if not v:
@@ -195,6 +174,33 @@ def normalize_item(it):
     return out
 
 
+def apply_order_notes(orders, notes_doc, warn):
+    """발주 건별 리뉴얼 여부·비고를 덧입힌다 (build/order_notes.json).
+
+    key = "발주일|제품명". orders.json 의 date·product 와 정확히 일치해야 적용된다.
+    맞지 않는 key 는 조용히 버리지 않고 경고로 남긴다 — 제품명이 바뀌면
+    비고가 소리 없이 사라지는 사고를 막기 위해서다.
+    """
+    notes = (notes_doc or {}).get("notes", {})
+    index = {f'{o.get("date")}|{o.get("product")}': o for o in orders}
+    hit = 0
+    for key, meta in notes.items():
+        o = index.get(key)
+        if o is None:
+            warn.append(f"발주 비고 미적용(키 불일치): {key} — order_notes.json 확인 필요")
+            continue
+        if meta.get("note"):
+            o["note"] = meta["note"]
+        if meta.get("renewal"):
+            o["renewal"] = True
+        if meta.get("src"):
+            o["noteSrc"] = meta["src"]
+        hit += 1
+    n_rnw = sum(1 for o in orders if o.get("renewal"))
+    print(f"· 발주 비고 {hit}건 적용 (리뉴얼 표시 {n_rnw}건)")
+    return orders
+
+
 def attach_po(items, orders):
     by_key = {}
     for o in orders:
@@ -212,47 +218,6 @@ def attach_po(items, orders):
             "qty": sum(o.get("qty") or 0 for o in rel),
             "last": rel[-1].get("date"),
             "unit": rel[-1].get("unit"),
-        }
-
-
-def annotate_renewal(orders):
-    """리뉴얼 발주 여부를 명시적 bool 로 정규화 (이미 renewal 키가 있으면 그 값을 존중)"""
-    for o in orders:
-        if "renewal" not in o:
-            o["renewal"] = (o.get("kind") == "리뉴얼")
-
-
-def merge_order_notes(orders, notes, warn):
-    """order_notes.json 의 날짜|제품명 키를 주문에 병합한다."""
-    if not isinstance(notes, dict):
-        warn.append("발주 노트가 객체가 아니어서 무시했습니다")
-        return
-    for raw_key, payload in notes.items():
-        if not isinstance(payload, dict) or "|" not in str(raw_key):
-            warn.append(f"발주 노트 키 형식 오류: {raw_key}")
-            continue
-        raw_date, raw_product = (clean_order_text(part)
-                                 for part in str(raw_key).split("|", 1))
-        note_date, note_product = order_date(raw_date), norm(raw_product)
-        hits = [o for o in orders
-                if order_date(o.get("date")) == note_date
-                and note_product
-                and (note_product == norm(clean_order_text(o.get("product")))
-                     or note_product in norm(clean_order_text(o.get("product")))
-                     or norm(clean_order_text(o.get("product"))) in note_product)]
-        if not hits:
-            warn.append(f"발주 노트 매칭 실패: {raw_key}")
-            continue
-        order = sorted(hits, key=lambda o: len(norm(o.get("product"))), reverse=True)[0]
-        order["renewal"] = bool(payload.get("renewal", order.get("renewal")))
-        if "note" in payload:
-            order["note"] = payload["note"]
-        if payload.get("src"):
-            order["noteSrc"] = payload["src"]
-        order["orderNote"] = {
-            "renewal": order["renewal"],
-            "note": payload.get("note"),
-            "src": payload.get("src"),
         }
 
 
@@ -352,8 +317,8 @@ def main():
     cfg = load_json(BUILD / "config.json", "설정(config.json)")
     sheet = load_json(BUILD / "sheet.json", "시트 스냅샷(sheet.json)")
     orders = load_json(BUILD / "orders.json", "발주 스냅샷(orders.json)")
-    notes = load_json(BUILD / "order_notes.json", "발주 노트(order_notes.json)")
     carry = load_json(BUILD / "carry.json", "보존값(carry.json)")
+    order_notes = load_json(BUILD / "order_notes.json", "발주 비고(order_notes.json)")
     owners_map = load_json(BUILD / "owners.json", "담당자 매핑(owners.json)")
     tpl_path = BUILD / "template.html"
     if not tpl_path.exists():
@@ -402,9 +367,8 @@ def main():
     items = [normalize_item(sheet_by_key[r["key"]]) for r in sheet] + \
             [normalize_item(x) for x in sorted(standalone, key=lambda x: x["key"])]
 
-    annotate_renewal(orders)
-    merge_order_notes(orders, notes, warn)
     fill_missing_order_matches(orders, sheet, warn)
+    apply_order_notes(orders, order_notes, warn)
     attach_po(items, orders)
 
     n_sheet = sum(1 for x in items if x["src"] in ("sheet", "both"))

@@ -11,16 +11,24 @@
 # 1) 저장소 clone
 cd /tmp && rm -rf pb && git clone https://github.com/daisy3015/pb-dashboard.git pb && cd /tmp/pb
 
-# 2) 노션 조회 결과(results 배열)를 build/notion.json 에 저장   ← MCP 로 수행
+# 2) 노션 조회 결과(results 배열)를 build/notion.json 에 저장          ← MCP 로 수행
+# 2B) 구글시트 CSV 를 내려받아 build/sheet_raw.csv 로 저장 후 반영
+python3 build/sync_sheet.py build/sheet_raw.csv
+# 2C) 슬랙 신규 발주를 추출해 build/slack_new.json 으로 저장 후 반영
+python3 build/sync_orders.py build/slack_new.json
+
 # 3) 빌드
 python3 build/build.py --notion build/notion.json
 
-# 4) 커밋 대상 3개만 푸시
-git add index.html build/data.json build/notion.json
+# 4) 커밋 대상 5개만 푸시
+git add index.html build/data.json build/notion.json build/sheet.json build/orders.json
 ```
 
 출력에 **`중단:`** 이 있으면 안전장치가 걸린 것입니다. **배포하지 말고** 사유를 보고하세요.
 `--allow-empty` 로 우회하지 마세요.
+
+`sync_sheet.py` / `sync_orders.py` 는 각각 출력에 `■ 경고` 를 남길 수 있습니다 —
+안전장치처럼 실행을 막지는 않지만(정보가 불완전해 반영을 건너뛴 것뿐), **반드시 최종 보고에 포함**하세요.
 
 ---
 
@@ -29,30 +37,78 @@ git add index.html build/data.json build/notion.json
 | 파일 | 성격 | 설명 |
 |---|---|---|
 | `build.py` | 코드 | 빌드 스크립트. 아래 입력들을 합쳐 `index.html` 을 생성 |
+| `sync_sheet.py` | 코드 | 구글시트 CSV → `sheet.json` 스펙 필드 병합 (2B단계) |
+| `sync_orders.py` | 코드 | 슬랙 신규 발주 JSON → `orders.json` 추가 (2C단계) |
 | `template.html` | 고정 | 대시보드 UI 원본. `__DB_JSON__` 자리에 데이터가 주입됨 |
 | `notion.json` | **매일 갱신** | 노션 조회 결과(`results` 배열). 2단계에서 덮어씀 |
-| `sheet.json` | 스냅샷 | 구글시트 "제품 스펙 정리표" 제품 55건 |
-| `orders.json` | 스냅샷 | 슬랙 발주 의뢰 59건 (매칭 판정 포함) |
+| `sheet.json` | **매일 갱신** | 구글시트 "제품 스펙 정리표". 2B단계에서 스펙 필드만 갱신 |
+| `orders.json` | **매일 갱신** | 슬랙 발주 의뢰. 2C단계에서 신규 건만 누적 추가 |
 | `config.json` | 고정 | 시트·노션·슬랙·Gmail 링크, 개발 프로세스 12단계 |
 | `owners.json` | 거의 고정 | 노션 담당자 `user id` → 대시보드 표시명 |
 | `carry.json` | 거의 고정 | 노션에서 사라진 속성(시작일·생성일) 보존값 |
+| `order_notes.json` | 손으로 관리 | 발주 건별 **리뉴얼 여부(R 배지) · 비고**. 슬랙 발주채널 원문에서 옮겨 적습니다 |
 | `data.json` | **자동 출력** | 이번 빌드 결과 스냅샷. 다음 실행의 "직전 대비 변경" 비교 기준 |
 
 `index.html` 은 저장소 루트에 생성됩니다 (GitHub Pages 가 그 파일을 서비스함).
 
 ---
 
-## ⚠️ 중요 — 매일 갱신되는 건 노션뿐입니다
+## order_notes.json — 발주 비고 · R 배지
 
-`build.py` 는 네트워크에 접속하지 않습니다. 따라서:
+발주현황 표의 **비고** 칸과 제품명 옆 **R(리뉴얼) 배지**를 채우는 파일입니다.
+자동 추출이 아니라 **사람이 확인하고 적는 파일**입니다 — 슬랙 원문에 명시된
+수치만 옮기고, 추측·의역은 넣지 않습니다.
 
-- **노션** → 매일 새로 반영됩니다 ✅
-- **구글시트(제품 55건)** → `sheet.json` 스냅샷 고정 ❌
-- **슬랙 발주(59건)** → `orders.json` 스냅샷 고정 ❌
+```json
+"2026-06-24|YDY 코랄칼마디 K2": {
+  "renewal": true,
+  "note": "제조사 이관 · 제조원가 5,960원(▼310원) · ...",
+  "src": "https://pharmabroshq.slack.com/archives/C09FCV7UHF1/p1782277871857239"
+}
+```
 
-시트에 신제품이 추가되거나 슬랙에 새 발주가 올라와도 **자동 반영되지 않습니다.**
-반영이 필요하면 `sheet.json` / `orders.json` 을 갱신해 커밋해야 합니다.
-(현재 스냅샷 기준일: 2026-07-28)
+* key 는 `발주일|제품명` — `orders.json` 의 `date`·`product` 와 **정확히** 일치해야 합니다
+* `renewal: true` 인 건에만 R 배지가 붙습니다. 단가 변경·수량 조정처럼 리뉴얼이
+  아닌 건은 `false` 로 두고 비고만 남깁니다
+* key 가 맞지 않으면 build.py 가 `■ 경고` 로 알려줍니다. **경고가 뜨면 비고가
+  화면에서 사라진 상태**이니 그냥 넘기지 마세요
+
+새 리뉴얼 발주가 슬랙에 올라오면 이 파일에 한 줄 추가하면 됩니다.
+
+---
+
+## 노션·구글시트·슬랙 — 무엇이 매일 자동 반영되는가
+
+`build.py` 자체는 네트워크에 접속하지 않지만, 2/2B/2C 단계에서 각각의 원본을
+읽어 `notion.json` / `sheet.json` / `orders.json` 을 매일 갱신한 뒤 빌드합니다.
+
+| 원본 | 반영 범위 | 비고 |
+|---|---|---|
+| 노션 | 전체 필드 | 매일 완전 재계산 |
+| 구글시트(제품 스펙 정리표) | **스펙 14개 필드만** (이름·브랜드·품번·포장·성분 등) | 아래 참고 |
+| 슬랙(#상품기획-타임라인_발주의뢰) | 신규 발주만 누적 추가 | 아래 참고 |
+
+### 왜 시트는 스펙 필드만 자동 반영하는가
+
+대시보드가 쓰는 `stage`(단계) · `status1`/`status2`(진행 상태) · `market`(국내/수출) ·
+`isOverseas`/`origin` 같은 **판매·진행 상태 분류는 이 구글시트 안에 없습니다**
+(시트에는 제품 사양 표만 있음). 그래서 `sync_sheet.py` 는:
+
+- 품번(또는 브랜드+제품명)으로 기존 항목과 매칭해 **사양 필드만** 덮어씁니다
+- 시트에 새 제품이 생기면 항목을 추가하되 상태는 `"확인 필요"` 로 표시하고 경고를 남깁니다
+  (판매 중인지 준비 중인지 시트만으론 알 수 없기 때문 — 사람이 확인 후 고쳐야 함)
+- 시트에서 제품이 사라져도 **삭제하지 않고** 경고만 남깁니다 (실제 단종인지 확인 필요)
+
+### 왜 슬랙은 "신규 건만 누적 추가"인가
+
+슬랙 메시지는 자유 텍스트라 수량·납기일 형식이 메시지마다 다릅니다
+(예: "6,667 set / 40,000 ea" 처럼 단위가 두 개 섞여 있기도 함). 그래서:
+
+- 이미 `orders.json` 에 있는 `ts`(메시지 고유 시각)는 건너뜁니다 → 안전하게 매번 최근
+  메시지를 다시 읽어도 중복되지 않습니다
+- 제품명이 없거나 수량·납기일이 둘 다 없는 메시지는 **넣지 않고 경고만** 남깁니다
+- 어떤 시트 항목과도 매칭 안 되면(개발 중인 신제품, 포장재 등) `build.py` 가
+  이미 이런 경우를 "발주 매칭 실패" 로 표시합니다 — 정상 동작이니 당황하지 마세요
 
 ---
 
@@ -69,6 +125,43 @@ git add index.html build/data.json build/notion.json
 | 템플릿의 `__DB_JSON__` 이 1개가 아님 | `중단: 템플릿의 자리표시자가 …` |
 
 임계값은 `build.py` 상단 상수(`MIN_TOTAL_RATIO` 등)에서 조정합니다.
+
+---
+
+## 2B / 2C 단계 상세 (예약 작업이 실제로 하는 일)
+
+### 2B — 구글시트
+
+1. Google Drive MCP 로 CSV 내보내기를 받습니다
+   (`download_file_content`, fileId는 `build/config.json` 의 `sheetUrl` 에서 추출,
+   `exportMimeType: "text/csv"`) — 응답은 base64 문자열이므로 디코드해서
+   `build/sheet_raw.csv` 로 저장합니다.
+2. `python3 build/sync_sheet.py build/sheet_raw.csv` 실행 — 결과와 경고를 그대로 보고에 포함합니다.
+
+### 2C — 슬랙 신규 발주
+
+1. Slack MCP `slack_read_channel` 로 `build/config.json` 의 `slack.channelId`
+   채널에서 최근 메시지를 읽습니다 (`limit: 100` 이면 보통 몇 달치가 나옵니다 —
+   중복은 `sync_orders.py` 가 `ts` 로 걸러내므로 매번 넉넉히 읽어도 안전합니다).
+2. 각 발주 메시지에서 아래 필드를 추출해 JSON 배열로 만들어 `build/slack_new.json` 에 저장합니다.
+   메시지는 보통 `*[제품명 재발주의 건]*` 제목 + `• 라벨: 값` 형태의 불릿 목록입니다.
+
+   | 필드 | 추출 방법 |
+   |---|---|
+   | `ts` | 메시지의 `Message TS` 값 (문자열 그대로) |
+   | `date` | 메시지 작성 일시의 날짜 부분 |
+   | `author` | 작성자 이름 |
+   | `kind` | 제목에 "재발주"면 `"재발주"`, "추가"면 `"추가발주"`, 그 외엔 `"발주"` |
+   | `product` | 불릿의 `제품명` 값 (없으면 제목에서 브랜드/제품명 추출) |
+   | `vendor` | 불릿의 `제조사` 또는 `거래처` 값 (있는 쪽 사용) |
+   | `qty` | 불릿의 `발주수량` 값에서 숫자만 (예: "4,100 set" → 4100) |
+   | `unit` | `발주수량` 값의 단위 (set/ea/장/병 등). 단위가 두 개면(예: "6,667 set / 40,000 ea") 뒤쪽 값을 우선 사용 |
+   | `due` | 불릿의 `납기일`/`예상납기일`/`목표납기일` 값 원문 그대로 (정규화하지 않음) |
+   | `slackUrl` | 채널 URL + `/p` + ts(점 제거) |
+
+   제품명이나 (수량·납기일)을 알아낼 수 없는 메시지는 그냥 배열에 포함해도 됩니다 —
+   `sync_orders.py` 가 걸러내고 경고로 알려줍니다.
+3. `python3 build/sync_orders.py build/slack_new.json` 실행 — 결과와 경고를 보고에 포함합니다.
 
 ---
 
