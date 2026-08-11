@@ -1334,6 +1334,18 @@ function orderNewTag(o){
 const isRenewalOrder=o=>o.renewal===true||o.kind==="리뉴얼";
 const renewalTag=o=>isRenewalOrder(o)
   ?` <span class="tg renewal-badge" title="리뉴얼 발주">R</span>`:"";
+const SNAP_ORDER_NOTES=new Map(DB.orders.map(o=>[`${String(o.date||"").trim()}|${nname(o.product)}`,{
+  renewal:o.renewal,note:o.note,noteSrc:o.noteSrc,orderNote:o.orderNote
+}]));
+const mergeOrderAnnotations=orders=>orders.map(o=>{
+  const saved=SNAP_ORDER_NOTES.get(`${String(o.date||"").trim()}|${nname(o.product)}`);
+  if(!saved) return o;
+  if(saved.renewal===true) o.renewal=true;
+  if(saved.note!=null) o.note=saved.note;
+  if(saved.noteSrc) o.noteSrc=saved.noteSrc;
+  if(saved.orderNote) o.orderNote=saved.orderNote;
+  return o;
+});
 const orderSourceTag=o=>{
   const candidates=[o.orderNote&&o.orderNote.src,o.noteSrc,o.slackUrl];
   const url=candidates.find(v=>/^https:\/\/[^/]*slack\.com\//i.test(String(v||"")))
@@ -1662,7 +1674,7 @@ async function syncAll(silent){
   /*  Slack (발주 의뢰) */
   try{
     const po=await querySlack();
-    if(po&&po.length){ DB.orders=po; SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
+    if(po&&po.length){ DB.orders=mergeOrderAnnotations(po); SRC.slack={n:po.length,ok:true,msg:"릴레이 실시간"}; msgs.push(`발주 ${po.length}건`) }
   }catch(e){ SRC.slack.ok=false; SRC.slack.msg="연결 실패 — 스냅샷 사용"; errs.push("발주: "+e.message) }
 
   tagOrigin(DB.items);                              // 원산지 속성 재부여
