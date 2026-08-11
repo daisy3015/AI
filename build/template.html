@@ -1849,7 +1849,7 @@ function openSheetSpec(r){
         <div class="poc"><div class="k">최근 발주일</div><div class="v sm">${esc(r.po.last||"–")}</div></div>
       </div>
       ${myOrders.length?`<table class="spectbl slim"><tbody>${myOrders.map(o=>
-        `<tr><th>${esc(o.date)}</th><td>${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${renewalTag(o)}${orderNewTag(o)}${orderSourceTag(o)}${orderNoteTag(o)}</td></tr>`
+        `<tr><th>${esc(o.date)}</th><td>${nf(o.qty)} ${esc(o.unit)} · ${esc(o.vendor||"-")} · ${esc(o.author||"-")}${o.due?` · 납기 ${esc(fmtDue(o.due,o.date))}`:""}${orderSourceTag(o)}${renewalTag(o)}${orderNewTag(o)}${orderNoteTag(o)}</td></tr>`
       ).join("")}</tbody></table>`:""}
     </div>`:""}`;
   $("#mFoot").innerHTML=[
